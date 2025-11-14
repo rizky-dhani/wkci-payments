@@ -1,0 +1,10 @@
+RewriteEngine on
+
+RewriteOptions inherit
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-SSL} !on
+RewriteCond %{HTTP_HOST} ^payments\.k-popindonesia\.id$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.payments\.k-popindonesia\.id$
+RewriteRule ^/?$ "https\:\/\/payments\.k-popindonesia\.id\/" [R=301,L]
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ /public/$1 [L,QSA]

@@ -1,0 +1,6 @@
+.label-col {
+    width: 120px; /* Fixed width for labels */
+}
+.colon-col {
+    width: 10px; /* Fixed width for colons */
+}
