@@ -2,20 +2,25 @@
 
 namespace App\Mail;
 
+use App\Models\Transaction;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Milon\Barcode\DNS2D;
-use App\Models\Transaction;
 
 class SuccessPayment extends Mailable
 {
     use Queueable, SerializesModels;
-    public $transactionId, $custName, $amount, $result;
+
+    public $transactionId;
+
+    public $custName;
+
+    public $amount;
+
+    public $result;
+
     /**
      * Create a new message instance.
      */
@@ -33,6 +38,7 @@ class SuccessPayment extends Mailable
     public function envelope(): Envelope
     {
         $orderNo = Transaction::select('trx_order_no')->where('transactionId', $this->transactionId)->first();
+
         return new Envelope(
             subject: 'Payment Successful for [#'.$orderNo['trx_order_no'].']',
         );
@@ -55,6 +61,6 @@ class SuccessPayment extends Mailable
      */
     public function attachments(): array
     {
-        return [ ];
+        return [];
     }
 }

@@ -9,8 +9,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class SendPaymentEmailJob implements ShouldQueue
 {
@@ -54,14 +54,14 @@ class SendPaymentEmailJob implements ShouldQueue
             Log::info('Payment email sent successfully', [
                 'type' => $this->type,
                 'email' => $this->email,
-                'transaction_id' => $this->transactionId
+                'transaction_id' => $this->transactionId,
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to send payment email', [
                 'error' => $e->getMessage(),
                 'type' => $this->type,
                 'email' => $this->email,
-                'transaction_id' => $this->transactionId
+                'transaction_id' => $this->transactionId,
             ]);
             throw $e;
         }
@@ -76,7 +76,7 @@ class SendPaymentEmailJob implements ShouldQueue
             'error' => $exception->getMessage(),
             'type' => $this->type,
             'email' => $this->email,
-            'transaction_id' => $this->transactionId
+            'transaction_id' => $this->transactionId,
         ]);
     }
 }
