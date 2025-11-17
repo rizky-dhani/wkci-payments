@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TransactionResource\Pages;
-use App\Filament\Resources\TransactionResource\RelationManagers;
 use App\Models\Transaction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TransactionResource extends Resource
 {
@@ -44,7 +41,7 @@ class TransactionResource extends Resource
                 Forms\Components\TextInput::make('amount')
                     ->label('Amount')
                     ->required()
-                    ->maxLength(255)
+                    ->maxLength(255),
             ]);
     }
 
@@ -84,7 +81,7 @@ class TransactionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

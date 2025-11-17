@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\RoleResource\Pages;
 
 use App\Filament\Resources\RoleResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditRole extends EditRecord
@@ -14,6 +13,7 @@ class EditRole extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
     protected function getCreatedNotificationTitle(): ?string
     {
         return 'Role updated successfully';

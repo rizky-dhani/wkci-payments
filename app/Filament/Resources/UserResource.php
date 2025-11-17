@@ -2,20 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use App\Models\User;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\User;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
@@ -35,14 +32,14 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Select::make('roles')
-                ->relationship('roles', 'name')
-                ->preload()
+                    ->relationship('roles', 'name')
+                    ->preload(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
-        
+
         return $table
             ->modifyQueryUsing(function ($query) {
                 $query->where('id', '!=', 1);
@@ -57,7 +54,7 @@ class UserResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('roles')
-                    ->relationship('roles', 'name', fn (Builder $query) => $query->where('id', '!=', 1))
+                    ->relationship('roles', 'name', fn (Builder $query) => $query->where('id', '!=', 1)),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
