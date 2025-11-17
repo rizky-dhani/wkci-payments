@@ -2,15 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\Transaction;
-use App\Services\YukkPaymentService;
 use App\Services\QRCodeService;
 use App\Services\WooCommerceService;
-use App\Jobs\SendPaymentEmailJob;
+use App\Services\YukkPaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class YukkPaymentTest extends TestCase
@@ -56,10 +53,10 @@ class YukkPaymentTest extends TestCase
     public function test_services_can_be_instantiated()
     {
         // Test that our services can be instantiated without errors
-        $yukkService = new YukkPaymentService();
-        $qrService = new QRCodeService();
-        $wooService = new WooCommerceService();
-        
+        $yukkService = new YukkPaymentService;
+        $qrService = new QRCodeService;
+        $wooService = new WooCommerceService;
+
         $this->assertInstanceOf(YukkPaymentService::class, $yukkService);
         $this->assertInstanceOf(QRCodeService::class, $qrService);
         $this->assertInstanceOf(WooCommerceService::class, $wooService);

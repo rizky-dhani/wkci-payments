@@ -18,7 +18,7 @@ class PaymentFlowTest extends TestCase
         $customerData = [
             'customer_name' => 'John Doe',
             'customer_email' => 'john@example.com',
-            'total' => 100000
+            'total' => 100000,
         ];
 
         $orderId = 'ORDER123';
@@ -36,12 +36,12 @@ class PaymentFlowTest extends TestCase
             'trx_order_no' => $orderId,
             'customer_name' => 'John Doe',
             'customer_email' => 'john@example.com',
-            'amount' => 100000
+            'amount' => 100000,
         ]);
 
         // Verify session storage instead of cache
-        $this->assertTrue(!empty(Session::get('current_transaction_id')));
-        $this->assertTrue(!empty(Session::get('transaction_expires_at')));
+        $this->assertTrue(! empty(Session::get('current_transaction_id')));
+        $this->assertTrue(! empty(Session::get('transaction_expires_at')));
     }
 
     /** @test */
@@ -50,7 +50,7 @@ class PaymentFlowTest extends TestCase
         $customerData = [
             'customer_name' => '',
             'customer_email' => 'john@example.com',
-            'total' => 100000
+            'total' => 100000,
         ];
 
         Livewire::test('public.payments')
@@ -66,7 +66,7 @@ class PaymentFlowTest extends TestCase
         $customerData = [
             'customer_name' => 'John Doe',
             'customer_email' => 'invalid-email',
-            'total' => 100000
+            'total' => 100000,
         ];
 
         Livewire::test('public.payments')
@@ -82,7 +82,7 @@ class PaymentFlowTest extends TestCase
         $customerData = [
             'customer_name' => 'John Doe',
             'customer_email' => 'john@example.com',
-            'total' => 0
+            'total' => 0,
         ];
 
         Livewire::test('public.payments')
@@ -98,7 +98,7 @@ class PaymentFlowTest extends TestCase
         $customerData = [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
-            'total' => 200000
+            'total' => 200000,
         ];
 
         // Test session isolation
@@ -108,12 +108,12 @@ class PaymentFlowTest extends TestCase
             ->call('proceedPayment');
 
         $transactionId = Session::get('current_transaction_id');
-        $this->assertTrue(!empty($transactionId));
-        
+        $this->assertTrue(! empty($transactionId));
+
         // Verify transaction exists in database
         $this->assertDatabaseHas('transactions', [
             'transactionId' => $transactionId,
-            'trx_order_no' => 'ORDER456'
+            'trx_order_no' => 'ORDER456',
         ]);
     }
 }
