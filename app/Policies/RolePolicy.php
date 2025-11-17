@@ -3,9 +3,8 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class RolePolicy
 {
