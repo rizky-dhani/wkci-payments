@@ -34,5 +34,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'lippo_api' => [
+        'base_url' => env('LIPPO_API_BASE_URL'),
+        'username' => env('LIPPO_API_USERNAME'),
+        'password' => env('LIPPO_API_PASSWORD'),
+    ],
 
 ];
