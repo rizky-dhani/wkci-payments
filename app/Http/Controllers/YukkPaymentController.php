@@ -2,25 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
-use App\Services\QRCodeService;
-use App\Services\YukkPaymentService;
-use App\Services\WooCommerceService;
-use App\Jobs\SendPaymentEmailJob;
 use App\Http\Requests\GenerateQRISRequest;
 use App\Http\Requests\QueryPaymentRequest;
-use App\Mail\PendingPayment;
-use App\Mail\SuccessPayment;
-use Milon\Barcode\DNS2D;
-use Automattic\WooCommerce\Client;
+use App\Jobs\SendPaymentEmailJob;
+use App\Models\Transaction;
+use App\Services\QRCodeService;
+use App\Services\WooCommerceService;
+use App\Services\YukkPaymentService;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Http;
-use DateTime;
-use DateTimeZone;
 
 class YukkPaymentController extends Controller
 {
@@ -39,10 +32,10 @@ class YukkPaymentController extends Controller
             DB::beginTransaction();
 
             $validated = $request->validated();
-            
+
             $result = $this->yukkService->generateQRIS([
                 'transaction_id' => $validated['trx_id'],
-                'amount' => $validated['amount']
+                'amount' => $validated['amount'],
             ]);
 
             $qrWeb = $this->qrService->generateQRCodeHTML($result['qrContent']);
@@ -64,9 +57,9 @@ class YukkPaymentController extends Controller
             DB::rollBack();
             Log::error('QRIS generation failed', [
                 'error' => $e->getMessage(),
-                'request' => $request->validated()
+                'request' => $request->validated(),
             ]);
-            
+
             return back()->withErrors('Payment generation failed. Please try again.');
         }
     }
@@ -78,8 +71,8 @@ class YukkPaymentController extends Controller
     {
         try {
             $transactionData = Cache::get('transactionData');
-            
-            if (!$transactionData) {
+
+            if (! $transactionData) {
                 return back()->withErrors('Transaction data not found.');
             }
 
@@ -87,13 +80,14 @@ class YukkPaymentController extends Controller
                 ->where('transactionId', $transactionData['transactionId'])
                 ->first();
 
-            if (!$transaction) {
+            if (! $transaction) {
                 return back()->withErrors('Transaction not found.');
             }
 
             return $this->processPaymentQuery($transaction, $transactionData);
         } catch (\Exception $e) {
             Log::error('Payment query failed', ['error' => $e->getMessage()]);
+
             return back()->withErrors('Payment query failed. Please try again.');
         }
     }
@@ -105,21 +99,22 @@ class YukkPaymentController extends Controller
     {
         try {
             $transactionId = base64_decode($request->validated()['trxId']);
-            
+
             $transaction = Transaction::where('transactionId', $transactionId)->first();
-            
-            if (!$transaction) {
+
+            if (! $transaction) {
                 return back()->withErrors('Transaction not found.');
             }
 
             $transactionData = [
                 'transactionId' => $transactionId,
-                'amount' => $transaction->amount
+                'amount' => $transaction->amount,
             ];
 
             return $this->processPaymentQuery($transaction, $transactionData);
         } catch (\Exception $e) {
             Log::error('Payment query from email failed', ['error' => $e->getMessage()]);
+
             return back()->withErrors('Payment query failed. Please try again.');
         }
     }
@@ -137,7 +132,7 @@ class YukkPaymentController extends Controller
             }
 
             $qr = $this->qrService->generateQRCodeHTML($transaction->qrCode ?? '');
-            
+
             return view('query-payment', [
                 'order_id' => base64_encode($transaction->trx_order_no),
                 'qr' => $qr,
@@ -217,13 +212,14 @@ class YukkPaymentController extends Controller
                 'responseMessage' => 'Successful',
                 'accessToken' => $accessToken,
                 'tokenType' => 'Bearer',
-                'expiresIn' => '900'
+                'expiresIn' => '900',
             ]);
         } catch (\Exception $e) {
             Log::error('Generate access token for YUKK failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'responseCode' => '5007300',
-                'responseMessage' => 'Internal Server Error'
+                'responseMessage' => 'Internal Server Error',
             ], 500);
         }
     }
@@ -249,13 +245,14 @@ class YukkPaymentController extends Controller
 
             return response()->json([
                 'responseCode' => '2005200',
-                'responseMessage' => 'Successful'
+                'responseMessage' => 'Successful',
             ]);
         } catch (\Exception $e) {
             Log::error('Payment notification failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'responseCode' => '5005200',
-                'responseMessage' => 'Internal Server Error'
+                'responseMessage' => 'Internal Server Error',
             ], 500);
         }
     }
@@ -266,19 +263,19 @@ class YukkPaymentController extends Controller
     private function validateYukkRequest(string $signature, string $clientID, string $timestamp, string $grantType)
     {
         $expectedClientId = config('yukk.client_id');
-        $timestampFormat = (new DateTime())->format('c');
+        $timestampFormat = (new DateTime)->format('c');
 
         if ($clientID !== $expectedClientId) {
             return response()->json([
                 'responseCode' => '4007300',
-                'responseMessage' => 'Unauthorized. Invalid Client ID'
+                'responseMessage' => 'Unauthorized. Invalid Client ID',
             ], 401);
         }
 
-        if (!$grantType) {
+        if (! $grantType) {
             return response()->json([
                 'responseCode' => '4007302',
-                'responseMessage' => 'Invalid Mandatory Field grantType'
+                'responseMessage' => 'Invalid Mandatory Field grantType',
             ], 400);
         }
 
@@ -305,8 +302,8 @@ class YukkPaymentController extends Controller
             'externalStoreId' => request()->input('externalStoreId') ?? config('yukk.store_id'),
             'additionalInfo' => [
                 'additionalField' => request()->input('additionalField') ?? $queryResult['additionalInfo']['additionalField'] ?? [],
-                'rrn' => '210430233071'
-            ]
+                'rrn' => '210430233071',
+            ],
         ];
     }
 
@@ -320,7 +317,7 @@ class YukkPaymentController extends Controller
             'latestTransactionStatus' => 'Invalid Mandatory Field latestTransactionStatus',
             'transactionStatusDesc' => 'Invalid Mandatory Field transactionStatusDesc',
             'amount.value' => 'Invalid Mandatory Field amount.value',
-            'additionalInfo.rrn' => 'Invalid Mandatory Field additionalInfo.rrn'
+            'additionalInfo.rrn' => 'Invalid Mandatory Field additionalInfo.rrn',
         ];
 
         foreach ($requiredFields as $field => $message) {
@@ -328,7 +325,7 @@ class YukkPaymentController extends Controller
             if (empty($value)) {
                 return response()->json([
                     'responseCode' => '4005202',
-                    'responseMessage' => $message
+                    'responseMessage' => $message,
                 ], 400);
             }
         }
@@ -336,7 +333,7 @@ class YukkPaymentController extends Controller
         if ($body['externalStoreId'] !== config('yukk.store_id')) {
             return response()->json([
                 'responseCode' => '4005202',
-                'responseMessage' => 'Invalid Mandatory Field externalStoreId'
+                'responseMessage' => 'Invalid Mandatory Field externalStoreId',
             ], 400);
         }
 

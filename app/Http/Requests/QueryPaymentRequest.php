@@ -20,7 +20,7 @@ class QueryPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'trxId' => 'required|string'
+            'trxId' => 'required|string',
         ];
     }
 

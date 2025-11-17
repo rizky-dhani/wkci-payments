@@ -24,7 +24,7 @@ class GenerateQRISRequest extends FormRequest
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'order_id' => 'required|string|max:255',
-            'amount' => 'required|numeric|min:1|max:999999999'
+            'amount' => 'required|numeric|min:1|max:999999999',
         ];
     }
 
@@ -42,7 +42,7 @@ class GenerateQRISRequest extends FormRequest
             'amount.required' => 'Amount is required',
             'amount.numeric' => 'Amount must be a valid number',
             'amount.min' => 'Amount must be at least 1',
-            'amount.max' => 'Amount cannot exceed 999,999,999'
+            'amount.max' => 'Amount cannot exceed 999,999,999',
         ];
     }
 

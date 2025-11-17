@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Transaction;
 use Automattic\WooCommerce\Client;
 use Illuminate\Support\Facades\Log;
 
@@ -30,17 +29,19 @@ class WooCommerceService
     public function completeOrder(string $orderId): bool
     {
         try {
-            $this->client->put('orders/' . $orderId, [
-                'status' => 'completed'
+            $this->client->put('orders/'.$orderId, [
+                'status' => 'completed',
             ]);
 
             Log::info('WooCommerce order completed', ['order_id' => $orderId]);
+
             return true;
         } catch (\Exception $e) {
             Log::error('Failed to complete WooCommerce order', [
                 'error' => $e->getMessage(),
-                'order_id' => $orderId
+                'order_id' => $orderId,
             ]);
+
             return false;
         }
     }
@@ -51,13 +52,15 @@ class WooCommerceService
     public function getOrder(string $orderId): ?array
     {
         try {
-            $response = $this->client->get('orders/' . $orderId);
+            $response = $this->client->get('orders/'.$orderId);
+
             return (array) $response;
         } catch (\Exception $e) {
             Log::error('Failed to get WooCommerce order', [
                 'error' => $e->getMessage(),
-                'order_id' => $orderId
+                'order_id' => $orderId,
             ]);
+
             return null;
         }
     }
