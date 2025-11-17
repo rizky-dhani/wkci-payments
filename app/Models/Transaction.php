@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
@@ -19,13 +19,13 @@ class Transaction extends Model
         'paid_at',
         'amount',
         'qrCode',
-        'submitted_date'
+        'submitted_date',
     ];
 
     protected $casts = [
         'submitted_date' => 'datetime',
         'paid_at' => 'datetime',
-        'amount' => 'decimal:2'
+        'amount' => 'decimal:2',
     ];
 
     /**
@@ -49,7 +49,7 @@ class Transaction extends Model
      */
     public function isPaid(): bool
     {
-        return $this->payment_status === 'paid' && !is_null($this->paid_at);
+        return $this->payment_status === 'paid' && ! is_null($this->paid_at);
     }
 
     /**
@@ -59,7 +59,7 @@ class Transaction extends Model
     {
         $this->update([
             'payment_status' => 'paid',
-            'paid_at' => now()
+            'paid_at' => now(),
         ]);
     }
 }

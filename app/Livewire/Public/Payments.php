@@ -2,21 +2,24 @@
 
 namespace App\Livewire\Public;
 
-use Livewire\Component;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
-use Automattic\WooCommerce\Client;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Log;
 use App\Models\Transaction;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Validate;
+use Livewire\Component;
 
 class Payments extends Component
 {
-    public $order_id, $return_url, $customer_data;
+    public $order_id;
+
+    public $return_url;
+
+    public $customer_data;
 
     #[Validate('required|string')]
     public $validated_order_id;
@@ -39,7 +42,7 @@ class Payments extends Component
             // Get order id from wkci main website
             $this->order_id = base64_decode(request()->query('order_id'));
             $this->return_url = base64_decode(request()->query('return_url'));
-            
+
             // Get customer data from wkci main website and decode it
             $customer_data = request()->query('customer_data');
             $this->customer_data = json_decode(base64_decode($customer_data), true);
@@ -56,9 +59,9 @@ class Payments extends Component
         } catch (\Exception $e) {
             Log::error('Failed to decode payment data', [
                 'error' => $e->getMessage(),
-                'query_params' => request()->query()
+                'query_params' => request()->query(),
             ]);
-            
+
             session()->flash('error', 'Invalid payment data. Please try again from the main website.');
         }
     }
@@ -70,8 +73,8 @@ class Payments extends Component
             $this->validate();
 
             // Additional validation for customer data structure
-            if (empty($this->customer_data['customer_name']) || 
-                empty($this->customer_data['customer_email']) || 
+            if (empty($this->customer_data['customer_name']) ||
+                empty($this->customer_data['customer_email']) ||
                 empty($this->customer_data['total'])) {
                 throw new \Exception('Missing required customer information.');
             }
@@ -83,12 +86,12 @@ class Payments extends Component
             ];
 
             // Use session-based storage instead of global cache
-            $sessionKey = 'orderData_' . session()->getId();
+            $sessionKey = 'orderData_'.session()->getId();
             Session::put($sessionKey, $data);
             Session::put('orderData_expires_at', now()->addMinutes(30));
 
             $uuid = (string) Str::orderedUuid();
-            
+
             $transaction = Transaction::create([
                 'transactionId' => $uuid,
                 'trx_order_no' => $this->order_id,
@@ -106,7 +109,7 @@ class Payments extends Component
                 'transaction_id' => $uuid,
                 'order_id' => $this->order_id,
                 'customer_email' => $this->customer_data['customer_email'],
-                'amount' => $this->customer_data['total']
+                'amount' => $this->customer_data['total'],
             ]);
 
             return $this->redirectRoute('generate_qr', [
@@ -124,10 +127,11 @@ class Payments extends Component
             Log::error('Payment processing failed', [
                 'error' => $e->getMessage(),
                 'order_id' => $this->order_id ?? 'unknown',
-                'customer_data' => $this->customer_data ?? []
+                'customer_data' => $this->customer_data ?? [],
             ]);
 
             session()->flash('error', 'Payment processing failed. Please try again.');
+
             return;
         }
     }
@@ -137,14 +141,15 @@ class Payments extends Component
      */
     public static function getOrderDataFromSession()
     {
-        $sessionKey = 'orderData_' . session()->getId();
+        $sessionKey = 'orderData_'.session()->getId();
         $expiresAt = Session::get('orderData_expires_at');
-        
+
         if ($expiresAt && now()->greaterThan($expiresAt)) {
             Session::forget([$sessionKey, 'orderData_expires_at']);
+
             return null;
         }
-        
+
         return Session::get($sessionKey);
     }
 
@@ -154,12 +159,13 @@ class Payments extends Component
     public static function getCurrentTransactionId()
     {
         $expiresAt = Session::get('transaction_expires_at');
-        
+
         if ($expiresAt && now()->greaterThan($expiresAt)) {
             Session::forget(['current_transaction_id', 'transaction_expires_at']);
+
             return null;
         }
-        
+
         return Session::get('current_transaction_id');
     }
 
@@ -167,7 +173,7 @@ class Payments extends Component
     #[Layout('components.layouts.public')]
     public function render()
     {
-        return view('livewire.public.payments',[
+        return view('livewire.public.payments', [
             'order_id' => $this->order_id,
             'data' => $this->customer_data,
         ]);

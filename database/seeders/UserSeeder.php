@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
             'userId' => Str::orderedUuid(),
             'name' => 'Superadmin',
             'email' => 'superadmin@k-popindonesia.id',
-            'password' => Hash::make('SuperadminWkci2025!')
+            'password' => Hash::make('SuperadminWkci2025!'),
         ]);
 
         $superadmin->assignRole('Super Admin');

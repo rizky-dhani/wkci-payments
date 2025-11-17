@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -19,7 +17,5 @@ class AuthServiceProvider extends ServiceProvider
     /**
      * Bootstrap services.
      */
-    public function boot(): void
-    {
-    }
+    public function boot(): void {}
 }

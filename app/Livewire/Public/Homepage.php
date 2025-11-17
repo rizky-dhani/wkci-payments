@@ -3,8 +3,8 @@
 namespace App\Livewire\Public;
 
 use Livewire\Attributes\Layout;
-use Livewire\Component;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 
 class Homepage extends Component
 {
