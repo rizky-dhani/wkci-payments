@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Actions\ImportTransactionHistoryAction;
 use App\Filament\Resources\TransactionHistoryResource\Pages;
 use App\Models\TransactionHistory;
 use App\Services\PaymentApiService;
@@ -24,7 +25,7 @@ class TransactionHistoryResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         // Optionally show a count of sent transactions in the navigation
-        return (string) static::getModel()::whereNotNull('revenue_batch_id')->count();
+        return TransactionHistory::count();
     }
 
     public static function form(Form $form): Form
@@ -76,6 +77,10 @@ class TransactionHistoryResource extends Resource
                     ->date()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('transaction_time')
+                    ->label('Time')
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('amount')
                     ->label('Amount')
                     ->money('IDR', 0, 'id')
@@ -97,39 +102,6 @@ class TransactionHistoryResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('get_revenue_data')
-                    ->label('Get Revenue Data')
-                    ->visible(fn (TransactionHistory $record) => !is_null($record->revenue_batch_id))
-                    ->action(function (TransactionHistory $record) {
-                        $service = new PaymentApiService;
-
-                        $result = $service->getRevenue($record->revenue_batch_id);
-
-                        if ($result['success']) {
-                            $response = $result['data'];
-                            $message = "Successfully retrieved revenue data for Revenue Batch ID: {$record->revenue_batch_id}";
-
-                            // You can optionally update the record with new data from the response
-                            // For now, let's just show a notification with the retrieved data
-                            $retrievedTransactions = $response['data'] ?? [];
-                            $transactionCount = count($retrievedTransactions);
-                            $message .= ". Retrieved {$transactionCount} transactions.";
-
-                            Notification::make()
-                                ->title($message)
-                                ->success()
-                                ->send();
-                        } else {
-                            Notification::make()
-                                ->title('Failed to retrieve revenue data')
-                                ->body($result['error'] ?? 'Unknown error')
-                                ->danger()
-                                ->send();
-                        }
-                    })
-                    ->requiresConfirmation()
-                    ->color('info')
-                    ->icon('heroicon-o-arrow-down-tray'),
                 Tables\Actions\Action::make('upload_to_api')
                     ->label('Upload to Lippo API')
                     ->action(function (TransactionHistory $record) {

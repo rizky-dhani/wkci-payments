@@ -151,17 +151,17 @@ return [
         // ],
 
         'default' => [
-        'scheme'   => env('REDIS_SCHEME'),
-        'path'     => env('REDIS_PATH'),
-        'url'      => env('REDIS_URL'),
-        'database' => env('REDIS_DB', 0),
+            'scheme' => env('REDIS_SCHEME'),
+            'path' => env('REDIS_PATH'),
+            'url' => env('REDIS_URL'),
+            'database' => env('REDIS_DB', 0),
         ],
 
         'cache' => [
-        'scheme'   => env('REDIS_SCHEME'),
-        'path'     => env('REDIS_PATH'),        
-        'port'     => env('REDIS_PORT'),
-        'database' => env('REDIS_CACHE_DB', 1),
+            'scheme' => env('REDIS_SCHEME'),
+            'path' => env('REDIS_PATH'),
+            'port' => env('REDIS_PORT'),
+            'database' => env('REDIS_CACHE_DB', 1),
         ],
 
     ],
