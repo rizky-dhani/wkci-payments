@@ -189,9 +189,16 @@ class TransactionHistoryResource extends Resource
                                     $message .= '. Some transactions had errors: '.implode(', ', $response['ErrorTransactionNumber']);
                                 }
 
-                                $this->notify('success', $message);
+                                Notification::make()
+                                    ->title($message)
+                                    ->success()
+                                    ->send();
                             } else {
-                                $this->notify('error', 'Failed to upload transactions: '.($result['error'] ?? 'Unknown error'));
+                                Notification::make()
+                                    ->title('Failed to upload transactions')
+                                    ->body($result['error'] ?? 'Unknown error')
+                                    ->danger()
+                                    ->send();
                             }
                         })
                         ->color('success')
