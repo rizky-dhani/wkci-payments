@@ -18,7 +18,7 @@ class TransactionHistoryImport implements ToModel, WithHeadingRow
         $timeConverted = Date::excelToDateTimeObject($rows['transaction_time']);
         $timeString = Carbon::parse($timeConverted)->toTimeString();
         return new TransactionHistory([
-            'transaction_date' => Date::excelToDateTimeObject($rows['transaction_date']),
+            'transaction_date' => Carbon::createFromFormat('Y-m-d', $rows['transaction_date']),
             'transaction_time' => Carbon::createFromFormat('H:i:s', $timeString),
             'amount' => $rows['amount'],
             'remarks' => $rows['remarks']
