@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class TransactionHistoryImport implements ToModel, WithHeadingRow, WithValidation
+class TransactionHistoryImport implements ToModel, WithHeadingRow
 {
     public function model(array $rows)
     {
@@ -28,15 +28,5 @@ class TransactionHistoryImport implements ToModel, WithHeadingRow, WithValidatio
     public function startRow(): int
     {
         return 2;
-    }
-    
-    public function rules(): array
-    {
-        return [
-            'transaction_date' => ['required', 'date'],
-            'transaction_time' => ['required', 'date_format:H:i:s'],
-            'amount' => ['required', 'numeric'],
-            'remarks' => ['nullable', 'string', 'max:1000'],
-        ];
     }
 }
