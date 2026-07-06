@@ -96,8 +96,12 @@ class TransactionHistoryResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 //
+            ])
+            ->groups([
+                'created_at'
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
