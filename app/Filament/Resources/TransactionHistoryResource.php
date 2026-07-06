@@ -205,6 +205,7 @@ class TransactionHistoryResource extends Resource
                                     ->send();
                             }
                         })
+                        ->requiresConfirmation()
                         ->color('success')
                         ->icon('heroicon-o-arrow-up-tray'),
                     Tables\Actions\DeleteBulkAction::make(),
